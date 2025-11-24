@@ -1,7 +1,8 @@
-const MESSAGE_TYPES = {
-  INITIATE_CLIP: "INITIATE_CLIP",
-  CLIP_READY: "CLIP_READY",
-  CLIP_ERROR: "CLIP_ERROR"
+const ACTIONS = {
+  START_SELECTION_MODE: "start-selection-mode",
+  CLIP_FULL_PAGE: "clip-full-page",
+  CLIP_READY: "clip-ready",
+  CLIP_ERROR: "clip-error"
 };
 
 const STATUS_VARIANTS = {
@@ -27,9 +28,9 @@ const setStatus = (text, variant = "idle") => {
  * Listens for clip completion messages from background
  */
 chrome.runtime.onMessage.addListener((message) => {
-  if (message?.type === MESSAGE_TYPES.CLIP_READY) {
+  if (message?.action === ACTIONS.CLIP_READY) {
     setStatus("Clip ready! Check your downloads.", "success");
-  } else if (message?.type === MESSAGE_TYPES.CLIP_ERROR) {
+  } else if (message?.action === ACTIONS.CLIP_ERROR) {
     setStatus(`Something went wrong: ${message.error}`, "error");
   }
 });
@@ -39,16 +40,18 @@ chrome.runtime.onMessage.addListener((message) => {
  */
 const requestClip = async (mode) => {
   if (mode === "selection") {
-    setStatus("Select an area on the page...", "idle");
+    setStatus("Hover over an element, then click to clip it…", "idle");
   } else {
     setStatus("Clipping in progress…");
   }
   
   try {
-    const response = await chrome.runtime.sendMessage({
-      type: MESSAGE_TYPES.INITIATE_CLIP,
-      mode
-    });
+    const action =
+      mode === "selection"
+        ? ACTIONS.START_SELECTION_MODE
+        : ACTIONS.CLIP_FULL_PAGE;
+
+    const response = await chrome.runtime.sendMessage({ action });
 
     if (!response?.success) {
       throw new Error(response?.error || "Clip failed.");
