@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>WebVizz Clipper</title>
+    <link href="popup.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="title">WebVizz Clipper</div>
+      <div class="subtitle">Choose how you want to clip this page.</div>
+      <div class="actions">
+        <button id="clipFull" class="action primary">Clip Full Page</button>
+        <button id="clipSelection" class="action secondary">
+          Clip Selection Only
+        </button>
+      </div>
+      <div id="status" class="status" aria-live="polite"></div>
+    </div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
